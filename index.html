@@ -889,17 +889,15 @@ section:not(#resume)>.w{position:relative;z-index:1}
 
     <div class="contact-form-wrap">
       <form class="contact-form" id="contactForm" action="https://formsubmit.co/shivrajthakur.np@gmail.com" method="POST">
-  <input type="hidden" name="_subject" value="New Portfolio Message — Shivraj Thakur">
-  <input type="hidden" name="_captcha" value="true">
-  <input type="hidden" name="_template" value="table">
-  <input type="hidden" name="_next" value="https://formsubmit.co/thanks">
+        <input type="hidden" name="_subject" value="New Portfolio Message - Shivraj Thakur">
+        <input type="hidden" name="_template" value="table">
+        <input type="hidden" name="_captcha" value="true">
 
         <div class="contact-field"><label for="contactName">Name</label><input id="contactName" name="name" type="text" placeholder="Enter Name" autocomplete="name" required></div>
         <div class="contact-field"><label for="contactEmail">Email</label><input id="contactEmail" name="email" type="email" placeholder="Enter Email" autocomplete="email" required></div>
         <div class="contact-field"><label for="contactPhone">Phone</label><input id="contactPhone" name="phone" type="tel" placeholder="Enter Phone" autocomplete="tel"></div>
         <div class="contact-field"><label for="contactMessage">Message</label><textarea id="contactMessage" name="message" placeholder="Enter Message" required></textarea></div>
         <button type="submit" class="contact-send">Send Message</button>
-<p id="formStatus" class="mu" style="font-size:.82rem;margin-top:8px" aria-live="polite">Your message will be securely sent to Shivraj.</p>
       </form>
     </div>
   </div>
@@ -997,17 +995,7 @@ document.getElementById('dlbtn').addEventListener('click', () => {
   }
 });
 
-/* Contact form: opens the visitor's email client with a prefilled message. */
-document.getElementById('contactForm').addEventListener('submit',e=>{
-  e.preventDefault();
-  const name=document.getElementById('contactName').value.trim();
-  const email=document.getElementById('contactEmail').value.trim();
-  const phone=document.getElementById('contactPhone').value.trim();
-  const message=document.getElementById('contactMessage').value.trim();
-  const subject=encodeURIComponent('Portfolio enquiry from '+name);
-  const body=encodeURIComponent(`Name: ${name}\nEmail: ${email}\nPhone: ${phone||'Not provided'}\n\nMessage:\n${message}`);
-  window.location.href=`mailto:shivrajthakur.np@gmail.com?subject=${subject}&body=${body}`;
-});
+
 
 /* Subtle pointer parallax for the 3D hero. */
 const hero3d = document.querySelector('.hero-3d');
@@ -1025,27 +1013,19 @@ if (hero3d && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
   });
 }
 
-</script>
 
-
-
-
-<script>
-(function(){
-  const form = document.getElementById('contactForm');
-  if (!form) return;
-  form.addEventListener('submit', function(){
-    const button = form.querySelector('button[type="submit"], input[type="submit"]');
-    const status = document.getElementById('formStatus');
-    if (button) {
-      button.disabled = true;
-      button.style.opacity = '.7';
-      button.style.cursor = 'wait';
+/* FormSubmit handles the actual delivery. This only prevents double-clicks. */
+const contactForm = document.getElementById('contactForm');
+if (contactForm) {
+  contactForm.addEventListener('submit', () => {
+    const btn = contactForm.querySelector('button[type="submit"]');
+    if (btn) {
+      btn.disabled = true;
+      btn.textContent = 'Sending...';
     }
-    if (status) status.textContent = 'Sending your message…';
   });
-})();
-</script>
+}
 
+</script>
 </body>
 </html>
