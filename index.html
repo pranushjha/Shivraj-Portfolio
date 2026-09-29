@@ -125,7 +125,7 @@ h1{font-size:clamp(2.4rem,6vw,4.2rem);font-weight:700}
 .contact-form-wrap{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:28px;box-shadow:0 12px 28px -20px color-mix(in srgb,var(--tx) 20%,transparent)}
 .contact-form{display:grid;gap:16px}.contact-field{display:grid;gap:6px}.contact-field label{font-size:.82rem;font-weight:600}
 .contact-field input,.contact-field textarea{width:100%;border:1px solid var(--bd);border-radius:8px;background:var(--card);color:var(--tx);font:400 15px/1.5 var(--f);padding:11px 12px;outline:none}.contact-field input:focus,.contact-field textarea:focus{border-color:var(--ac);box-shadow:0 0 0 3px color-mix(in srgb,var(--ac) 12%,transparent)}
-.contact-field textarea{min-height:120px;resize:vertical}.contact-send{width:100%;border:1px solid var(--ac);border-radius:8px;padding:11px 20px;background:var(--ac);color:#fff;font:600 15px var(--f);cursor:pointer;transition:.2s}.contact-send:hover{transform:translateY(-2px);filter:brightness(.96)}
+.copy-hint{font-size:.72rem;opacity:.65;margin-left:5px}.contact-field textarea{min-height:120px;resize:vertical}.contact-send{width:100%;border:1px solid var(--ac);border-radius:8px;padding:11px 20px;background:var(--ac);color:#fff;font:600 15px var(--f);cursor:pointer;transition:.2s}.contact-send:hover{transform:translateY(-2px);filter:brightness(.96)}
 footer{border-top:1px solid var(--bd);padding-block:28px;color:var(--mu);font-size:.88rem}
 .js .rv{opacity:0;transform:translateY(10px);transition:opacity .5s,transform .5s}.js .rv.in{opacity:1;transform:none}
 @media(max-width:860px){
@@ -867,9 +867,9 @@ section:not(#resume)>.w{position:relative;z-index:1}
 
       <ul class="cl">
         <li>
-          <a href="mailto:shivrajthakur.np@gmail.com">
+          <a href="#" class="copy-email" aria-label="Copy email address">
             <span class="ci"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16v16H4z"/><path d="m4 6 8 7 8-7"/></svg>Email</span>
-            <span>shivrajthakur.np@gmail.com</span>
+            <span>shivrajthakur.np@gmail.com <small class="copy-hint">Click to copy</small></span>
           </a>
         </li>
         <li>
@@ -889,7 +889,6 @@ section:not(#resume)>.w{position:relative;z-index:1}
 
     <div class="contact-form-wrap">
       <form class="contact-form" id="contactForm">
-        <input type="hidden" name="_subject" value="New Portfolio Message - Shivraj Thakur">
         <div class="contact-field"><label for="contactName">Name</label><input id="contactName" name="name" type="text" placeholder="Enter Name" autocomplete="name" required></div>
         <div class="contact-field"><label for="contactEmail">Email</label><input id="contactEmail" name="email" type="email" placeholder="Enter Email" autocomplete="email" required></div>
         <div class="contact-field"><label for="contactPhone">Phone</label><input id="contactPhone" name="phone" type="tel" placeholder="Enter Phone" autocomplete="tel"></div>
@@ -992,52 +991,96 @@ document.getElementById('dlbtn').addEventListener('click', () => {
   }
 });
 
-/* Contact form: FormSubmit AJAX. The visitor stays on this page. */
-document.getElementById('contactForm').addEventListener('submit', async (e) => {
-  e.preventDefault();
-  const form = e.currentTarget;
-  const button = form.querySelector('button[type="submit"]');
-  const originalText = button.textContent;
+/* Contact form: Web3Forms AJAX submission. Never opens Gmail or another mail client. */
+(() => {
+  const form = document.getElementById('contactForm');
+  if (!form) return;
 
-  button.disabled = true;
-  button.textContent = 'Sending...';
+  const button = form.querySelector('.contact-send');
+  const originalButtonText = button ? button.textContent : 'Send Message';
 
-  const payload = {
-    name: document.getElementById('contactName').value.trim(),
-    email: document.getElementById('contactEmail').value.trim(),
-    phone: document.getElementById('contactPhone').value.trim() || 'Not provided',
-    message: document.getElementById('contactMessage').value.trim(),
-    _subject: 'New Portfolio Message - Shivraj Thakur'
-  };
-
-  try {
-    const response = await fetch('https://formsubmit.co/ajax/shivrajthakur.np@gmail.com', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json'
-      },
-      body: JSON.stringify(payload)
-    });
-
-    const raw = await response.text();
-    let result = {};
-    try { result = raw ? JSON.parse(raw) : {}; } catch (_) {}
-
-    if (!response.ok || result.success === false) {
-      throw new Error(result.message || `Form service returned HTTP ${response.status}`);
-    }
-
-    form.reset();
-    alert('Message sent successfully. Thank you!');
-  } catch (error) {
-    console.error('Contact form error:', error);
-    alert('The email service is temporarily unavailable. Please try again later.');
-  } finally {
-    button.disabled = false;
-    button.textContent = originalText;
+  // Create a status message without changing the existing form design.
+  let status = document.getElementById('contactStatus');
+  if (!status) {
+    status = document.createElement('div');
+    status.id = 'contactStatus';
+    status.setAttribute('role', 'status');
+    status.setAttribute('aria-live', 'polite');
+    status.style.marginTop = '4px';
+    status.style.minHeight = '22px';
+    status.style.fontSize = '.9rem';
+    form.appendChild(status);
   }
-});
+
+  form.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+
+    if (!form.reportValidity()) return;
+
+    if (button) {
+      button.disabled = true;
+      button.textContent = 'Sending...';
+    }
+    status.textContent = 'Sending your message...';
+    status.style.color = 'var(--mu)';
+
+    const formData = new FormData(form);
+    formData.append('access_key', '8b79906d-7ae5-42e1-9872-b634d3e29638');
+    formData.append('subject', 'New Portfolio Message - Shivraj Thakur');
+    formData.append('from_name', 'Shivraj Thakur Portfolio');
+    formData.append('botcheck', '');
+
+    try {
+      const response = await fetch('https://api.web3forms.com/submit', {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json'
+        },
+        body: formData
+      });
+
+      const result = await response.json();
+
+      if (!response.ok || !result.success) {
+        throw new Error(result.message || `HTTP ${response.status}`);
+      }
+
+      form.reset();
+      status.textContent = 'Message sent successfully.';
+      status.style.color = '#2e9d62';
+    } catch (error) {
+      console.error('Contact form error:', error);
+      status.textContent = 'Message could not be sent. Please try again.';
+      status.style.color = '#c94b4b';
+    } finally {
+      if (button) {
+        button.disabled = false;
+        button.textContent = originalButtonText;
+      }
+    }
+  });
+
+  // The displayed email copies to the clipboard instead of opening Gmail.
+  const emailLink = document.querySelector('.copy-email');
+  if (emailLink) {
+    emailLink.addEventListener('click', async (event) => {
+      event.preventDefault();
+      const email = 'shivrajthakur.np@gmail.com';
+      try {
+        await navigator.clipboard.writeText(email);
+        const hint = emailLink.querySelector('.copy-hint');
+        if (hint) {
+          const original = hint.textContent;
+          hint.textContent = 'Copied!';
+          setTimeout(() => { hint.textContent = original; }, 1600);
+        }
+      } catch (error) {
+        console.error('Email copy failed:', error);
+      }
+    });
+  }
+})();
 
 /* Subtle pointer parallax for the 3D hero. */
 const hero3d = document.querySelector('.hero-3d');
