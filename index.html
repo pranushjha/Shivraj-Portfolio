@@ -44,9 +44,9 @@ section{padding-block:clamp(56px,9vw,96px)}
 .skip{position:absolute;left:-999px}.skip:focus{left:10px;top:10px;background:var(--card);padding:8px 12px;z-index:99}
 .topbar{height:3px;background:linear-gradient(90deg,var(--ac),color-mix(in srgb,var(--ac) 25%,transparent),var(--ac))}
 header{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--bd)}
-.nav{display:flex;align-items:center;gap:20px;min-height:60px;flex-wrap:wrap}
+.nav{display:flex;align-items:center;gap:var(--spacing*12);min-height:60px;flex-wrap:wrap}
 .nav b{font-weight:700}
-.nav nav{display:flex;gap:18px;margin-left:auto;font-size:.92rem}
+.nav nav{display:flex;gap:12px;margin-left:auto;font-size:.92rem}
 .nav nav a{text-decoration:none;color:var(--mu);padding:6px 0}.nav nav a:hover{color:var(--tx)}
 .btn{display:inline-block;padding:11px 20px;border-radius:8px;font-weight:500;text-decoration:none;border:1px solid var(--bd);background:var(--card);transition:.2s}
 .btn:hover{transform:translateY(-2px);border-color:var(--ac)}
@@ -303,6 +303,10 @@ footer{border-top:1px solid var(--bd);padding-block:28px;color:var(--mu);font-si
 .mini-bars i:nth-child(5){height:20px}
 
 .project{
+  padding: var(--spacing * 4);
+
+  
+
   transform-style:preserve-3d;
   perspective:900px;
 }
@@ -611,7 +615,7 @@ section:not(#resume)>.w{position:relative;z-index:1}
 
 <header>
   <div class="w nav">
-    <b>Shivraj Thakur</b>
+    <b class="h">Shivraj Thakur</b>
     <nav aria-label="Main">
       <a href="#home">Home</a>
       <a href="#about">About</a>
